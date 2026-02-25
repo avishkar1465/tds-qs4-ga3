@@ -1,0 +1,25 @@
+name: Daily Update (24f3005132@ds.study.iitm.ac.in)
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # Runs daily at 10 PM UTC (pick any specific time, like this)
+  workflow_dispatch:      # Lets you trigger manually for testing
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Update timestamp file by 24f3005132@ds.study.iitm.ac.in
+        run: |
+          echo "Last updated: $(date -u)" > last-update.txt
+          git config user.name "DevSync Bot"
+          git config user.email "24f3005132@ds.study.iitm.ac.in"
+          git add last-update.txt
+          git diff --staged --quiet || git commit -m "Daily update: $(date -u) by 24f3005132@ds.study.iitm.ac.in"
+          git push
