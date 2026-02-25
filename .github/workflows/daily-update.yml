@@ -1,25 +1,37 @@
-name: Daily Update (24f3005132@ds.study.iitm.ac.in)
+name: DevSync Daily Update
 
 on:
+  # This tells the robot to run automatically on a schedule
   schedule:
-    - cron: '0 22 * * *'  # Runs daily at 10 PM UTC (pick any specific time, like this)
-  workflow_dispatch:      # Lets you trigger manually for testing
+    # This cron syntax means: "Run at 12:30 UTC every single day"
+    - cron: '30 12 * * *'
+  
+  # This lets you click a button to run it manually right now (crucial for testing!)
+  workflow_dispatch: 
+
+# We must give the robot permission to make and save changes to your code
+permissions:
+  contents: write
 
 jobs:
-  update:
+  daily-commit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      # Step 1: The robot downloads a copy of your repository
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
 
-      - name: Update timestamp file by 24f3005132@ds.study.iitm.ac.in
+      # Step 2: The robot makes a small text change so there is something to save
+      - name: Update daily log
         run: |
-          echo "Last updated: $(date -u)" > last-update.txt
-          git config user.name "DevSync Bot"
-          git config user.email "24f3005132@ds.study.iitm.ac.in"
-          git add last-update.txt
-          git diff --staged --quiet || git commit -m "Daily update: $(date -u) by 24f3005132@ds.study.iitm.ac.in"
+          echo "Automated daily update on: $(date)" >> daily_activity.txt
+
+      # Step 3: The robot saves (commits) the change to GitHub
+      # (This is the step that includes your email, as required)
+      - name: Commit changes for 24f3005132@ds.study.iitm.ac.in
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add daily_activity.txt
+          git commit -m "chore: automated daily log update"
           git push
